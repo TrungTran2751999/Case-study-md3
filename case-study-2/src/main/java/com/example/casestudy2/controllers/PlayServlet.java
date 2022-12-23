@@ -23,16 +23,21 @@ public class PlayServlet extends HttpServlet {
         if(film.getType().equals("2")){
             Films movie = filmsDAO.selectMovie(id);
             request.setAttribute("movie",movie);
+            filmsDAO.updateViewMovie(id, (int) film.getViews()+1);
         }else if(film.getType().equals("1")){
             List<Episodes> listEpisode = episodesDAO.findAllEpisode(id);
             request.setAttribute("listEpisode",listEpisode);
             if(request.getParameter("episode") == null){
                 Episodes firstEpisode = listEpisode.get(0);
+                filmsDAO.updateViewEpisode(firstEpisode.getIdEpisodes(),firstEpisode.getViews()+1);
+                filmsDAO.updateViewMovie(film.getId(), (int) film.getViews()+1);
                 request.setAttribute("firstEpisode",firstEpisode);
             }else{
                 int episode = Integer.parseInt(request.getParameter("episode"));
                 for(Episodes episodes: listEpisode){
                     if(episodes.getIdEpisodes() == episode){
+                        filmsDAO.updateViewEpisode(episodes.getIdEpisodes(),episodes.getViews()+1);
+                        filmsDAO.updateViewMovie(film.getId(), (int) film.getViews()+1);
                         request.setAttribute("firstEpisode",episodes);
                         request.setAttribute("episodeIdd", episode);
                     }

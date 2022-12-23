@@ -13,7 +13,10 @@
 <body>
 <style>
   .buttton{
-    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
   }
   .next{
     padding: 10px;

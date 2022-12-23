@@ -33,6 +33,12 @@ public class SerieServlet extends HttpServlet {
                 case "create":
                     response.sendRedirect("create-film.jsp");
                     break;
+                case "edit":
+                    directEditSeries(request,response);
+                    break;
+                case "delete":
+                    deleteSeries(request,response);
+                    break;
                 default:
                     showAllSeries(request,response);
             }
@@ -50,6 +56,9 @@ public class SerieServlet extends HttpServlet {
         switch (action){
             case "create":
                 createSeries(request,response);
+                break;
+            case "edit":
+                editSeries(request,response);
                 break;
             default:
                 showAllSeries(request,response);
@@ -100,6 +109,55 @@ public class SerieServlet extends HttpServlet {
         }
 
     }
+    private void editSeries(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("name");
+        Part image = request.getPart("image");
+        FilmsDAO filmsDAO = new FilmsDAO();
 
+        Films films = filmsDAO.findOneFilmById(id);
+        String nameImage = films.getImage().split("/")[3].split("\\.")[0];
+        String newNameImage = "series "+films.getName()+"-"+films.getId();
+        String responseImage = "";
+        if(image.getSubmittedFileName().equals("")){
+            responseImage = films.getImage();
+            Films newFilm = new Films(id, name, responseImage);
+            filmsDAO.editMovie(newFilm);
+
+            request.setAttribute("message","Edit successfully");
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("edit-movie.jsp");
+            requestDispatcher.forward(request,response);
+        }else {
+            responseImage = MoreDAO.createImage(request, response, "image", newNameImage);
+            if (!responseImage.equals("")) {
+                Films newFilm = new Films(id, name, responseImage);
+                filmsDAO.editMovie(newFilm);
+
+                request.setAttribute("message", "Edit successfully");
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("edit-movie.jsp");
+                requestDispatcher.forward(request, response);
+            } else {
+                request.setAttribute("message", "image must be .jpg, png, jpeg");
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("edit-movie.jsp");
+                requestDispatcher.forward(request, response);
+            }
+        }
+    }
+    private void directEditSeries(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id =Integer.parseInt(request.getParameter("id"));
+        FilmsDAO filmsDAO = new FilmsDAO();
+        Films film = filmsDAO.findOneFilmById(id);
+        request.setAttribute("movie", film);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("edit-series.jsp");
+        requestDispatcher.forward(request,response);
+    }
+    private void deleteSeries(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        int type = Integer.parseInt(request.getParameter("type"));
+        FilmsDAO filmsDAO = new FilmsDAO();
+        filmsDAO.deleteSeries(id);
+        Films films = filmsDAO.findOneFilmById(id);
+        response.sendRedirect("/admin/series?id="+type);
+    }
 
 }

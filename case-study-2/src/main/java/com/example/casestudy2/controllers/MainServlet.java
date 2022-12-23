@@ -18,7 +18,7 @@ public class MainServlet extends HttpServlet {
             if(request.getParameter("page") != null){
                 page = Integer.parseInt(request.getParameter("page"));
             }
-            int max = 5;
+            int max = 15;
             FilmsDAO filmsDAO = new FilmsDAO();
             List<Films> listFilm = filmsDAO.findAllFilms();
             List<Films> films = filmsDAO.paginateFilm((page-1)*max, max);

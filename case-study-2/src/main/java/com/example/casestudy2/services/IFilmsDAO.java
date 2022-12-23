@@ -25,4 +25,8 @@ public interface IFilmsDAO {
     void deleteMovie(int id);
     List<Films> searchFilm(String query);
     List<Films> paginateFilm(int start,int end);
+    void editSeries(Films films);
+    void updateViewMovie(int id, int view);
+    void updateViewEpisode(int id, int view);
+    void deleteSeries(int id);
 }

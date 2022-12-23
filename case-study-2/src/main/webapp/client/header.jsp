@@ -31,7 +31,7 @@
     <div id="search">
       <form action="${pageContext.request.contextPath}/search" method="get" accept-charset="utf-8">
         <label for="search-field">SEARCH</label>
-        <input type="text" name="query" placeholder="Enter search here" id="search-field" class="blink search-field"  />
+        <input type="text" name="query" placeholder="Enter search here" id="search-field" class="blink search-field" required/>
         <input type="submit" value="GO!" class="search-button" />
       </form>
     </div>

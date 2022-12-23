@@ -19,7 +19,7 @@ public class FilmsDAO implements IFilmsDAO {
     private static String REMOVE_FILMS = "DELETE FROM FILMS WHERE ID = ?";
     private static String SELECT_ALL_FILMS = "SELECT films.id, films.name, films.image, films.view, DATE_FORMAT(films.create_at,'%e-%M-%Y %H:%i:%s') as create_at, DATE_FORMAT(films.update_at,'%e-%M-%Y %H:%i:%s') as update_at, `type`.`name`as type FROM films join `type` on films.type = type.id ORDER BY update_at DESC";
     private static String SELECT_FILMS_BY_ID = "SELECT * FROM FILMS WHERE ID = ?";
-    private static String SELECT_FILMS_BY_CATEGORY = "SELECT FILMS.* FROM FILMS JOIN SERIES ON FILMS.ID = SERIES.FILMS_ID WHERE SERIES.CATEGORY_ID = ? ORDER BY FILMS.UPDATE_AT DESC";
+    private static String SELECT_FILMS_BY_CATEGORY = "SELECT FILMS.* , SERIES.CATEGORY_ID AS CATEGORY FROM FILMS JOIN SERIES ON FILMS.ID = SERIES.FILMS_ID WHERE SERIES.CATEGORY_ID = ? ORDER BY FILMS.UPDATE_AT DESC";
     private static String SELECT_NAME_CATEGORY = "SELECT NAME FROM CATEGORY WHERE ID = ?";
     private static String SELECT_FILMS_BY_MOVIE = "SELECT FILMS.ID, FILMS.NAME, FILMS.IMAGE, MOVIES.LINK, FILMS.CREATE_AT, FILMS.UPDATE_AT, FILMS.VIEW FROM FILMS JOIN MOVIES ON FILMS.ID = MOVIES.FILMS_ID ORDER BY UPDATE_AT DESC;";
     private static String SELECT_FILMS_BY_MOVIE_ID = "SELECT FILMS.NAME FROM FILMS JOIN MOVIES ON FILMS.ID = MOVIES.FILMS_ID WHERE MOVIES.ID = ?";
@@ -37,6 +37,12 @@ public class FilmsDAO implements IFilmsDAO {
     private static String DELETE_MOVIE_AT_MOVIES_AT_FILMS_ID = "DELETE FROM MOVIES WHERE FILMS_ID = ?";
     private static String SEARCH_FILM = "SELECT * FROM FILMS WHERE NAME LIKE ";
     private static String SELECT_FILM_LIMIT = "SELECT * FROM FILMS ORDER BY UPDATE_AT DESC LIMIT ?,?";
+    private static String UPDATE_SERIES = "UPDATE SERIES SET NAME=?, IMAGE=?, UPDATE_AT=? WHERE ID=?";
+    private static String UPDATE_VIEW_MOVIE = "UPDATE FILMS SET VIEW = ? WHERE ID = ?";
+    private static String UPDATE_VIEW_EPISODE = "UPDATE EPISODES SET VIEW=? WHERE ID=?";
+    private static String DELETE_ALL_EPISODE_BY_FILM_ID = "DELETE FROM EPISODES WHERE FILMS_ID=?";
+    private static String DELETE_SERIES = "DELETE FROM SERIES WHERE FILMS_ID = ?";
+    private static String DELETE_SERIES_AT_FILMS = "DELETE FROM FILMS WHERE ID = ?";
     public FilmsDAO() {
         connectDAO = new ConnectDAO();
     }
@@ -157,9 +163,10 @@ public class FilmsDAO implements IFilmsDAO {
                 String image = rs.getString("image");
                 String type = rs.getString("type");
                 long view = rs.getLong("view");
+                int categoryId = rs.getInt("category");
                 String createAt = rs.getString("create_at");
                 String updateAt = rs.getString("update_at");
-                listFilms.add(new Films(id, name, image, type, view, createAt, updateAt));
+                listFilms.add(new Films(id, name, image, type, view, createAt, updateAt, categoryId));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -392,5 +399,70 @@ public class FilmsDAO implements IFilmsDAO {
             e.printStackTrace();
         }
         return listFilms;
+    }
+
+
+    @Override
+    public void editSeries(Films series) {
+        DateFormat dateFormat = new SimpleDateFormat("YYYY:MM:dd HH:mm:ss");
+        String updateAt = dateFormat.format(new Date());
+        try(Connection connection = connectDAO.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SERIES)){
+            preparedStatement.setString(1, series.getName());
+            preparedStatement.setString(2, series.getImage());
+            preparedStatement.setString(3, updateAt);
+            preparedStatement.setInt(4, series.getId());
+            preparedStatement.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateViewMovie(int id, int view) {
+        try(Connection connection = connectDAO.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_VIEW_MOVIE)){
+           preparedStatement.setInt(1, view);
+           preparedStatement.setInt(2,id);
+           preparedStatement.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateViewEpisode(int id, int view) {
+        try(Connection connection = connectDAO.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_VIEW_EPISODE)){
+            preparedStatement.setInt(1, view);
+            preparedStatement.setInt(2,id);
+            preparedStatement.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteSeries(int id) {
+        try(Connection connection = connectDAO.getConnection();
+            PreparedStatement preparedStatementDeleteAllEpisode = connection.prepareStatement(DELETE_ALL_EPISODE_BY_FILM_ID);
+            PreparedStatement preparedStatementDeleteSeriesAtSeries = connection.prepareStatement(DELETE_SERIES);
+            PreparedStatement preparedStatementDeleteSeriesAtFilms = connection.prepareStatement(DELETE_SERIES_AT_FILMS);){
+
+            connection.setAutoCommit(false);
+
+            preparedStatementDeleteAllEpisode.setInt(1,id);
+            preparedStatementDeleteSeriesAtSeries.setInt(1,id);
+            preparedStatementDeleteSeriesAtFilms.setInt(1,id);
+
+            preparedStatementDeleteAllEpisode.executeUpdate();
+            preparedStatementDeleteSeriesAtSeries.executeUpdate();
+            preparedStatementDeleteSeriesAtFilms.executeUpdate();
+
+            connection.commit();
+            connection.setAutoCommit(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

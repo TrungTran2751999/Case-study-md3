@@ -9,7 +9,7 @@
     <meta name="author" content=""/>
     <title>Dashboard - SB Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet"/>
-    <link href="${pageContext.request.contextPath}/admin/css/styles.css" rel="stylesheet"/>
+    <link href="css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <style>
@@ -20,18 +20,6 @@
 <body class="sb-nav-fixed">
 <!-- --------------------------------------------NAV_BAR--------------------------------------------- -->
 <%@ include file="navbar.jsp"%>
-<c:if test="${message != null}">
-    <script>
-        let mes = "<c:out value="${message}" />"
-        Swal.fire({
-            position: 'top-center',
-            icon: 'success',
-            title: mes,
-            showConfirmButton: false,
-            timer: 2500
-        })
-    </script>
-</c:if>
 <!-- --------------------------------------------NAV_BAR--------------------------------------------- -->
 <!-- -------------------------------------------------MAIN--------------------------------------------------- -->
 <div id="layoutSidenav">
@@ -39,45 +27,42 @@
     <%@include file="sidebar.jsp"%>
     <!-- ------------------------------------------------------SIDE-BAR----------------------------------------------- -->
     <div id="layoutSidenav_content">
+        <c:if test="${message != null}">
+            <script>
+                let mes = "<c:out value="${message}" />"
+                Swal.fire({
+                    position: 'top-center',
+                    icon: 'success',
+                    title: mes,
+                    showConfirmButton: false,
+                    timer: 2500
+                })
+            </script>
+        </c:if>
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Series</h1>
+                <h1 class="mt-4"><c:out value="${movie.getName()}"/></h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">Series</li>
+                    <li class="breadcrumb-item active"><c:out value="${movie.getName()}"/></li>
                 </ol>
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
-                        Series
+                        <c:out value="${movie.getName()}"/>
                     </div>
                     <!-- ---------------------------------------------TABLE---------------------------------------------------- -->
                     <div class="card-body">
-                        <form action="/admin/series?action=create" enctype="multipart/form-data" method="post" style="display: flex; flex-direction: column; gap: 10px">
+                        <form action="/admin/movie?action=edit" enctype="multipart/form-data" method="post" style="display: flex; flex-direction: column; gap: 10px">
+                            <input type="hidden" name="filmId" value="${movie.getId()}">
                             <div>
-                                <label>NAME SERIES</label>
-                                <input type="text" name="nameSeries" min="30" class="form-control"  max="1000" required >
+                                <label>NAME MOVIE</label>
+                                <input type="text" name="nameMovie" value="${movie.getName()}" class="form-control" required>
                             </div>
                             <div>
-                                <label>NAME EPISODE</label>
-                                <input type="text" name="nameEpisode" min="30" max="1000" class="form-control" required>
+                                <div>IMAGE</div>
+                                <img  style="margin-bottom: 12px" src="${movie.getImage()}" width="100px" height="150px">
+                                <input id="image" type="file" name="image" class="form-control" >
                             </div>
-                            <div>
-                                <label>IMAGE</label>
-                                <input type="file" name="image" class="form-control" required>
-                            </div>
-                            <div>
-                                <label>LINK</label>
-                                <input type="text" name="link" max="1000" min="30" class="form-control" required>
-                            </div>
-                            <label>Category</label>
-                            <select class="form-select" name="category" required>
-                                <option  value=""selected="true" disabled="disabled">---Select category---</option>
-                                <option value="1">Kamen rider</option>
-                                <option value="2">Power Ranger</option>
-                                <option value="3">Super sentai</option>
-                                <option value="4">Garo</option>
-                                <option value="5">Ultraman</option>
-                            </select>
                             <input style="width: 100px;" type="submit" value="Create" class="btn btn-primary">
                         </form>
                     </div>
@@ -101,5 +86,8 @@
 </div>
 <!-- -------------------------------------------------MAIN--------------------------------------------------- -->
 <%@include file="script.jsp" %>
+<script>
+    console.log(document.getElementById("image").value);
+</script>
 </body>
 </html>

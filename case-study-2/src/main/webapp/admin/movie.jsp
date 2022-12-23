@@ -56,52 +56,54 @@
                             </thead>
                             <tbody>
                             <% int stt = 1; %>
-                            <c:forEach items="${listFilm}" var="film">
-                                <tr>
-                                    <td style="text-align: center;"><%= stt++ %></td>
-                                    <td style="text-align: center;">
-                                        <c:out value="${film.getName()}"/>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <img src="<c:out value="${film.getImage()}"/>"
-                                             alt=""
-                                             style="width: 100px; height: 75px"
-                                        >
-                                    </td>
-                                    <td style="text-align: center;"><c:out value="${film.getLink()}"/></td>
-                                    <td style="text-align: center;"><c:out value="${film.getViews()}"/></td>
-                                    <td style="text-align: center;"><c:out value="${film.getConvertCreateAt()}"/></td>
-                                    <td style="text-align: center;"><c:out value="${film.getConvertUpdateAt()}"/></td>
-                                    <th style="text-align: center">
-                                        <a  style="cursor: pointer" data-toggle="modal" data-target="#exampleModal-${film.getId()}">
-                                            <img style="margin-right: 20px;" src="${pageContext.request.contextPath}/admin/assets/img/delete.png"
-                                                 width="15px" height="15px" alt="">
-                                        </a>
-                                        <a href="/admin/movie?action=edit&filmId=${film.getId()}">
-                                            <img src="${pageContext.request.contextPath}/admin/assets/img/update.png" width="15px" height="15px" alt="">
-                                        </a>
-                                    </th>
-                                </tr>
-                                <div class="modal fade" id="exampleModal-${film.getId()}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Do you want to delete ${film.getName()} ?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <a href="/admin/movie?action=delete&filmId=${film.getId()}&name=${film.getImage()}" class="btn btn-primary">Delete</a>
+                            <c:if test="${lisFilm.size() > 0}">
+                                <c:forEach items="${listFilm}" var="film">
+                                    <tr>
+                                        <td style="text-align: center;"><%= stt++ %></td>
+                                        <td style="text-align: center;">
+                                            <c:out value="${film.getName()}"/>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <img src="<c:out value="${film.getImage()}"/>"
+                                                 alt=""
+                                                 style="width: 100px; height: 75px"
+                                            >
+                                        </td>
+                                        <td style="text-align: center;"><c:out value="${film.getLink()}"/></td>
+                                        <td style="text-align: center;"><c:out value="${film.getViews()}"/></td>
+                                        <td style="text-align: center;"><c:out value="${film.getConvertCreateAt()}"/></td>
+                                        <td style="text-align: center;"><c:out value="${film.getConvertUpdateAt()}"/></td>
+                                        <th style="text-align: center">
+                                            <a  style="cursor: pointer" data-toggle="modal" data-target="#exampleModal-${film.getId()}">
+                                                <img style="margin-right: 20px;" src="${pageContext.request.contextPath}/admin/assets/img/delete.png"
+                                                     width="15px" height="15px" alt="">
+                                            </a>
+                                            <a href="/admin/movie?action=edit&filmId=${film.getId()}">
+                                                <img src="${pageContext.request.contextPath}/admin/assets/img/update.png" width="15px" height="15px" alt="">
+                                            </a>
+                                        </th>
+                                    </tr>
+                                    <div class="modal fade" id="exampleModal-${film.getId()}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Do you want to delete ${film.getName()} ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <a href="/admin/movie?action=delete&filmId=${film.getId()}&name=${film.getImage()}" class="btn btn-primary">Delete</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </c:forEach>
+                                </c:forEach>
+                            </c:if>
                             </tbody>
                         </table>
                     </div>

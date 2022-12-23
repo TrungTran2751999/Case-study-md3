@@ -115,7 +115,6 @@ public class MovieServlet extends HttpServlet {
         String nameMovie = request.getParameter("nameMovie");
         String link = request.getParameter("link");
         Part image = request.getPart("image");
-        System.out.println("image.getName(): "+image.getSubmittedFileName());
         FilmsDAO filmsDAO = new FilmsDAO();
 
         Films films = filmsDAO.selectMovie(filmId);

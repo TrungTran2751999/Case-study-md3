@@ -10,6 +10,7 @@ public class Films {
     private String updateAt;
     private String link;
     private int typeId;
+    private int categoryId;
 
     public Films(int id, String name, String image, String type, long views, String createAt, String updateAt) {
         this.id = id;
@@ -68,6 +69,25 @@ public class Films {
         this.id = id;
         this.name = name;
         this.link = link;
+    }
+
+    public Films(int id, String name, String image, String type, long view, String createAt, String updateAt, int categoryId) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.type = type;
+        this.views = view;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
+        this.categoryId = categoryId;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public int getId() {
